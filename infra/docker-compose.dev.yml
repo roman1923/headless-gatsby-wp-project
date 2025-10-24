@@ -1,0 +1,78 @@
+# Development Docker Compose
+# Usage: docker-compose -f infra/docker-compose.dev.yml up -d
+
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:6.4-php8.1-apache
+    container_name: wordpress-dev
+    ports:
+      - "8888:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wpdb
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', false);
+    volumes:
+      - ./wp-data:/var/www/html
+      - ./plugins:/var/www/html/wp-content/plugins
+      - ./themes:/var/www/html/wp-content/themes
+      - ./custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    depends_on:
+      - db
+    networks:
+      - dev-network
+
+  db:
+    image: mariadb:10.5
+    container_name: wp-mysql-dev
+    environment:
+      MARIADB_DATABASE: wpdb
+      MARIADB_USER: wpuser
+      MARIADB_PASSWORD: wppass
+      MARIADB_ROOT_PASSWORD: rootpass
+    volumes:
+      - ./db-data:/var/lib/mysql
+    networks:
+      - dev-network
+
+  gatsby:
+    build:
+      context: ./gatsby-frontend
+      target: development
+    container_name: gatsby-dev
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - wordpress
+    environment:
+      - NODE_ENV=development
+      - GATSBY_SENTRY_DSN=${GATSBY_SENTRY_DSN}
+      - GATSBY_AMPLITUDE_API_KEY=${GATSBY_AMPLITUDE_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+    volumes:
+      - ./gatsby-frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install --legacy-peer-deps && npm run develop -- --host 0.0.0.0"
+    networks:
+      - dev-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    driver: bridge

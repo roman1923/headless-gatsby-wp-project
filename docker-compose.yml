@@ -1,0 +1,66 @@
+services:
+  wordpress:
+    image: wordpress:6.4-php8.1-apache
+    container_name: wordpress
+    ports:
+      - "8888:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wpdb
+    volumes:
+      - ./wp-data:/var/www/html
+      - ./plugins:/var/www/html/wp-content/plugins
+      - ./themes:/var/www/html/wp-content/themes
+      - ./custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.5
+    container_name: wp-mysql
+    environment:
+      MARIADB_DATABASE: wpdb
+      MARIADB_USER: wpuser
+      MARIADB_PASSWORD: wppass
+      MARIADB_ROOT_PASSWORD: rootpass
+    volumes:
+      - ./db-data:/var/lib/mysql
+
+  gatsby:
+    build:
+      context: ./gatsby-frontend
+    container_name: gatsby_frontend
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - wordpress
+    environment:
+      - NODE_ENV=development
+      - GATSBY_SENTRY_DSN=${GATSBY_SENTRY_DSN}
+      - GATSBY_AMPLITUDE_API_KEY=${GATSBY_AMPLITUDE_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - GATSBY_FAST_DEV=true
+      - GATSBY_PRESERVE_WEBPACK_CACHE=true
+    volumes:
+      - ./gatsby-frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install --legacy-peer-deps && ./node_modules/.bin/gatsby develop --host 0.0.0.0 --port 8000"
+    mem_limit: 4g
+    restart: unless-stopped
+  
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+

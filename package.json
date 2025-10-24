@@ -1,0 +1,52 @@
+{
+  "name": "wordpress-developers-database",
+  "version": "1.0.0",
+  "description": "A cutting-edge, enterprise-grade platform connecting world-class WordPress developers with innovative projects",
+  "main": "index.js",
+  "scripts": {
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "restart": "docker-compose restart",
+    "logs": "docker-compose logs -f",
+    "build": "docker-compose build",
+    "clean": "docker-compose down -v && docker-compose up -d",
+    "test": "cd gatsby-frontend && npm test",
+    "test:e2e": "cd gatsby-frontend && npm run test:e2e",
+    "lint": "cd gatsby-frontend && npm run lint",
+    "build:frontend": "cd gatsby-frontend && npm run build",
+    "develop": "cd gatsby-frontend && npm run develop",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/"
+  },
+  "keywords": [
+    "wordpress",
+    "gatsby",
+    "graphql",
+    "headless-cms",
+    "developers",
+    "database",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "docker"
+  ],
+  "author": "Roman Zhurakivskyi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "homepage": "https://github.com/",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "workspaces": [
+    "gatsby-frontend"
+  ],
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

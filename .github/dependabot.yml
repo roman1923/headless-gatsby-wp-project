@@ -1,0 +1,104 @@
+version: 2
+updates:
+  # Gatsby frontend dependencies
+  - package-ecosystem: "npm"
+    directory: "/gatsby-frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "security-team"
+    assignees:
+      - "dev-team"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "gatsby-frontend"
+    groups:
+      gatsby-updates:
+        patterns:
+          - "gatsby*"
+        update-types:
+          - "minor"
+          - "patch"
+      security-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "security"
+      dev-dependencies:
+        patterns:
+          - "@testing-library/*"
+          - "@typescript-eslint/*"
+          - "eslint*"
+          - "jest*"
+          - "playwright*"
+          - "prettier*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "gatsby"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "security-team"
+    assignees:
+      - "dev-team"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+    groups:
+      base-images:
+        patterns:
+          - "node*"
+          - "mariadb*"
+          - "redis*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "security-team"
+    assignees:
+      - "dev-team"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      actions:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
