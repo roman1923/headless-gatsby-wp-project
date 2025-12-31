@@ -1,0 +1,9 @@
+node_modules/
+.cache/
+public/
+build/
+dist/
+coverage/
+**/__generated__/
+*.d.ts
+

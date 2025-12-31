@@ -1,0 +1,19 @@
+overwrite: true
+schema: "http://wordpress:80/graphql"
+documents: "src/**/*.{ts,tsx,js,jsx}"
+generates:
+  src/__generated__/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      withHooks: true
+      withComponent: false
+      withHOC: false
+      scalars:
+        DateTime: string
+        Date: string
+        JSON: any
+
+
