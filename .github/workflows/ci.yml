@@ -26,9 +26,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-        env:
-          HUSKY: 0
+        run: HUSKY=0 npm install --legacy-peer-deps
 
       - name: Lint 
         run: npm run lint || echo "Lint warnings ignored"
